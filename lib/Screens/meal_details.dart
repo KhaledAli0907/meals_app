@@ -8,14 +8,49 @@ class MealDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final TextStyle? titleStyle = theme.textTheme.titleLarge?.copyWith(
+      color: theme.colorScheme.primary,
+      fontWeight: FontWeight.bold,
+    );
+    final TextStyle? bodyStyle = theme.textTheme.bodyMedium?.copyWith(
+      color: theme.colorScheme.onSurface,
+    );
+
     return Scaffold(
       appBar: AppBar(title: Text(meal.title)),
       body: Center(
-        child: Image.network(
-          meal.imageUrl,
-          fit: BoxFit.cover,
-          height: 300,
-          width: double.infinity,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Image.network(
+                meal.imageUrl,
+                fit: BoxFit.cover,
+                height: 300,
+                width: double.infinity,
+              ),
+              const SizedBox(height: 14),
+              Text('Ingredients', style: titleStyle),
+              for (final ingredient in meal.ingredients)
+                Text(ingredient, style: bodyStyle),
+              const SizedBox(height: 24),
+              Text('Steps', style: titleStyle),
+              for (int i = 0; i < meal.steps.length; i++)
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
+                  child: Text(
+                    '${i + 1}. ${meal.steps[i]}',
+                    style: bodyStyle,
+                    textAlign: TextAlign.center,
+                    softWrap: true,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );
