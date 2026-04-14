@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:meals/enums/affordability_enum.dart';
+import 'package:meals/enums/complexity_enum.dart';
 import 'package:meals/models/category.dart';
 import 'package:meals/models/meal.dart';
 

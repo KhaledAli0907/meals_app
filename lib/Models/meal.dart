@@ -1,6 +1,5 @@
-enum Complexity { simple, challenging, hard }
-
-enum Affordability { affordable, pricey, luxurious }
+import 'package:meals/enums/affordability_enum.dart';
+import 'package:meals/enums/complexity_enum.dart';
 
 class Meal {
   const Meal({

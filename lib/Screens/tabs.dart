@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meals/data/dummy_data.dart';
+import 'package:meals/enums/filters_enum.dart';
 import 'package:meals/providers/favorites_provider.dart';
+import 'package:meals/providers/filters_provider.dart';
 import 'package:meals/screens/filters.dart';
 import 'package:meals/screens/meals.dart';
 import 'package:meals/screens/categories.dart';
@@ -23,19 +25,13 @@ class TabsScreen extends ConsumerStatefulWidget {
 
 class _TabsScreenState extends ConsumerState<TabsScreen> {
   int _selectedPageIndex = 0;
-  Map<Filters, bool> _activeFilters = kInitialFilters;
 
   void _selectScreen(String identifier) async {
     Navigator.of(context).pop(); // close the drawer
     if (identifier == 'settings') {
-      final result = await Navigator.of(context).push<Map<Filters, bool>>(
-        MaterialPageRoute(
-          builder: (ctx) => FiltersScreen(currentFilters: _activeFilters),
-        ),
+      await Navigator.of(context).push<Map<Filters, bool>>(
+        MaterialPageRoute(builder: (ctx) => const FiltersScreen()),
       );
-      setState(() {
-        _activeFilters = result ?? kInitialFilters;
-      });
     }
   }
 
@@ -48,19 +44,20 @@ class _TabsScreenState extends ConsumerState<TabsScreen> {
   @override
   Widget build(BuildContext context) {
     Widget activePage = const Center(child: Text('Tabs'));
+    final activeFilters = ref.watch(filtersProvider);
     final availableMeals = dummyMeals
         .where(
           (meal) =>
-              (_activeFilters[Filters.glutenFree] == true
+              (activeFilters[Filters.glutenFree] == true
                   ? meal.isGlutenFree
                   : true) &&
-              (_activeFilters[Filters.lactoseFree] == true
+              (activeFilters[Filters.lactoseFree] == true
                   ? meal.isLactoseFree
                   : true) &&
-              (_activeFilters[Filters.vegetarian] == true
+              (activeFilters[Filters.vegetarian] == true
                   ? meal.isVegetarian
                   : true) &&
-              (_activeFilters[Filters.vegan] == true ? meal.isVegan : true),
+              (activeFilters[Filters.vegan] == true ? meal.isVegan : true),
         )
         .toList();
 
@@ -69,16 +66,11 @@ class _TabsScreenState extends ConsumerState<TabsScreen> {
     final favoriteMeals = ref.watch(favoriteMealsProvider);
     switch (_selectedPageIndex) {
       case 1:
-        activePage = MealsScreen(
-          title: 'Favorites',
-          meals: favoriteMeals,
-        );
+        activePage = MealsScreen(title: 'Favorites', meals: favoriteMeals);
         activePageTitle = 'Favorites';
         break;
       case 0:
-        activePage = CategoriesScreen(
-          availableMeals: availableMeals,
-        );
+        activePage = CategoriesScreen(availableMeals: availableMeals);
         activePageTitle = 'Categories';
         break;
     }
