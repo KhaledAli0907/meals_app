@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:meals/data/dummy_data.dart';
 import 'package:meals/enums/filters_enum.dart';
 import 'package:meals/providers/favorites_provider.dart';
 import 'package:meals/providers/filters_provider.dart';
@@ -44,22 +43,7 @@ class _TabsScreenState extends ConsumerState<TabsScreen> {
   @override
   Widget build(BuildContext context) {
     Widget activePage = const Center(child: Text('Tabs'));
-    final activeFilters = ref.watch(filtersProvider);
-    final availableMeals = dummyMeals
-        .where(
-          (meal) =>
-              (activeFilters[Filters.glutenFree] == true
-                  ? meal.isGlutenFree
-                  : true) &&
-              (activeFilters[Filters.lactoseFree] == true
-                  ? meal.isLactoseFree
-                  : true) &&
-              (activeFilters[Filters.vegetarian] == true
-                  ? meal.isVegetarian
-                  : true) &&
-              (activeFilters[Filters.vegan] == true ? meal.isVegan : true),
-        )
-        .toList();
+    final availableMeals = ref.watch(filteredMealsProvider);
 
     String activePageTitle = 'Tabs';
 

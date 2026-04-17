@@ -19,6 +19,8 @@ class MealDetailsScreen extends ConsumerWidget {
       color: theme.colorScheme.onSurface,
     );
 
+    final favoriteMeals = ref.watch(favoriteMealsProvider);
+    final isFavorite = favoriteMeals.contains(meal);
     void showInfoMessage(String message) {
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(
@@ -39,7 +41,7 @@ class MealDetailsScreen extends ConsumerWidget {
                   ? showInfoMessage('Added to favorites')
                   : showInfoMessage('Removed from favorites');
             },
-            icon: const Icon(Icons.star),
+            icon: Icon(isFavorite ? Icons.star : Icons.star_border),
           ),
         ],
       ),
