@@ -5,30 +5,51 @@ import 'package:meals/models/meal.dart';
 import 'package:meals/screens/meals.dart';
 import 'package:meals/widgets/categories_grid_item.dart';
 
-class CategoriesScreen extends StatelessWidget {
-  const CategoriesScreen({
-    super.key,
-    required this.availableMeals,
-  });
+class CategoriesScreen extends StatefulWidget {
+  const CategoriesScreen({super.key, required this.availableMeals});
   final List<Meal> availableMeals;
 
+  @override
+  State<CategoriesScreen> createState() => _CategoriesScreenState();
+}
+
+class _CategoriesScreenState extends State<CategoriesScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+      lowerBound: 0,
+      upperBound: 1,
+    );
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
   void _selectCategory(BuildContext context, Category category) {
-    final List<Meal> filteredMeals = availableMeals
+    final List<Meal> filteredMeals = widget.availableMeals
         .where((meal) => meal.categories.contains(category.id))
         .toList();
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (ctx) => MealsScreen(
-          title: category.title,
-          meals: filteredMeals,
-        ),
+        builder: (ctx) =>
+            MealsScreen(title: category.title, meals: filteredMeals),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return GridView(
+    final Widget grid = GridView(
       padding: const EdgeInsets.all(24),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
@@ -43,6 +64,24 @@ class CategoriesScreen extends StatelessWidget {
             onSelectCategory: () => _selectCategory(context, category),
           ),
       ],
+    );
+
+    return AnimatedBuilder(
+      animation: _animationController,
+      child: grid,
+      builder: (context, child) => SlideTransition(
+        position:
+            Tween<Offset>(
+              begin: const Offset(0, 0.3),
+              end: const Offset(0, 0),
+            ).animate(
+              CurvedAnimation(
+                parent: _animationController,
+                curve: Curves.easeInOut,
+              ),
+            ),
+        child: child,
+      ),
     );
   }
 }
